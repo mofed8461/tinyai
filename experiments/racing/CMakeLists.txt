@@ -2,7 +2,21 @@
 cmake_minimum_required (VERSION 3.5)
 project (TinyAI_racing)
 
+SET(ALL_LIBS
+	TinyAI
+	SFML
+	sfml-graphics
+	sfml-audio
+	sfml-system
+	sfml-window
+)
 
+add_subdirectory(SFML)
+
+include_directories(
+	SFML/include/
+	../../src/
+)
 
 add_executable(Racing
 	level.h

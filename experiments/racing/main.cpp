@@ -12,8 +12,15 @@
 #include "level.h"
 #include "physics.h"
 
-#include <tinyann.hpp>
-#include <tinyneat.hpp>
+#include <tinyann.h>
+#include <tinyneat.h>
+
+#define FRAME_RATE 3000
+#define SIM_SPEED 100
+#define GENERATION_LIMIT 60
+
+
+#define USE_GENERATION_LIMIT
 
 using namespace std;
 
@@ -170,7 +177,7 @@ public:
         if (dead)
             return ;
 
-        float elapsed = cl.restart().asSeconds();
+        float elapsed = cl.restart().asSeconds() * SIM_SPEED;
 
         float angle = rotation * elapsed;
         rotate(angle);
@@ -304,7 +311,7 @@ int main()
     sf::RenderWindow window;
     window.create(sf::VideoMode(768, 768), "Kolobosha adventures");
     window.setVerticalSyncEnabled(true); // call it once, after creating the window
-    window.setFramerateLimit(30.0); // call it once, after creating the window
+    window.setFramerateLimit(FRAME_RATE); // call it once, after creating the window
 
     pl::Object start = level.GetObject("start");
     pl::Object finish = level.GetObject("finish");
@@ -318,7 +325,8 @@ int main()
 
     
     // 5 input, 3 output, 1 bias, can be recurrent
-    neat::pool p(5, 3, 1, true);
+    neat::pool p(5, 3, 1, false);
+    p.mutation_rates.connection_mutate_chance = 0.4;
     p.import_fromfile("generation.dat");
     bool have_a_winner = false;
     unsigned int global_maxfitness = 0;
@@ -341,8 +349,12 @@ int main()
         }            
 
     // main loop
+#if defined(USE_GENERATION_LIMIT)
+    while(window.isOpen() && p.generation() < GENERATION_LIMIT)
+#else
     while(window.isOpen() && (!have_a_winner))
-    {        
+#endif
+    {
         sf::Event event;
         while(window.pollEvent(event))
         {
