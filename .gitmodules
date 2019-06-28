@@ -1,0 +1,4 @@
+[submodule "experiments/racing/SFML"]
+	path = experiments/racing/SFML
+	url = https://github.com/SFML/SFML.git
+
