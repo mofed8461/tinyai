@@ -1,10 +1,2 @@
-# gcc compiled headers
-*.gch
-
-# vim swap files
-*.swp
-
-# gcc output files
-a.out
-*.o
-
+build
+build/*
